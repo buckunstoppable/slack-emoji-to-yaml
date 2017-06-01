@@ -5,7 +5,7 @@ def start(cred):
 	return SlackClient(cred)
 
 def getSlackCreds(r, creds=None):
-	with open(os.path.join(r,"slack-creds.json")) as slackCreds:
+	with open(os.path.join(r,"env","slack.json")) as slackCreds:
 		creds = json.load(slackCreds)
 	return creds["token"]
 
