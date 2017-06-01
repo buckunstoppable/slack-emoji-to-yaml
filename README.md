@@ -2,7 +2,7 @@
 
 Currently, Slack does not offer a way to port custom emoji from team to team, or to upload custom emoji via an exposed API endpoint. 
 
-This script connect you to your team's Slack, retrieve a list of its custom emoji, and create a .yaml file that can be used by the EmojiPacks app (https://github.com/lambtron/emojipacks) to bulk upload these custom emoji to a new team.
+This script will connect you to your team's Slack, retrieve a list of its custom emoji via the Slack API, and create a .yaml file that can be used by the EmojiPacks app (https://github.com/lambtron/emojipacks) to bulk upload these custom emoji to a new team.
 
 ## Requirements
 You will need to retrieve the slackclient module via `pip install slackclient`.
