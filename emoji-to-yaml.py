@@ -12,22 +12,35 @@ def getSlackCreds(r, creds=None):
 def getAvailableEmoji(client):
 	response = client.api_call("emoji.list")
 	emojiJson = response["emoji"]
+	aliasArray = []
 	for key,val in emojiJson.items():
 		emojiJson[key] = val.replace("\/","/")
-		if "alias:" in val:
+		if val.startswith("alias:"):
+			original = val[6:]
+			aliasArray.append({"original":original, "alias": key})
 			del emojiJson[key]
-	return emojiJson
+	return emojiJson, aliasArray
 
-def createYaml(emojiJson):
+def createYaml(emojiJson, aliasArray):
 	with open("emoji.yaml", "w") as outfile:
 		outfile.write("title: all\nemojis:")
 		for key,val in emojiJson.items():
 			nameLine = "\n  - name: " + key
 			srcLine = "\n    src: " + val
+			aliasText = ""
+			needsAliasHeading = True
+			for aliasRow in aliasArray:
+				if key == aliasRow["original"]:
+					if needsAliasHeading:
+						aliasText = "\n    aliases:"
+						needsAliasHeading = False
+					aliasText += "\n    - %s" % aliasRow["alias"]
+					aliasArray.remove(aliasRow)
 			outfile.write(nameLine)
+			outfile.write(aliasText)
 			outfile.write(srcLine)
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 slackConnection = start(getSlackCreds(ROOT))
-emojiJson = getAvailableEmoji(slackConnection)
-createYaml(emojiJson)
+emojiJson, aliasArray = getAvailableEmoji(slackConnection)
+createYaml(emojiJson, aliasArray)
